@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kortexneo — La Methode</title>
+<meta name="description" content="Explication de la methode Kortexneo appliquee au manuscrit de Voynich. Par Machkour Mohamed.">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --parch:       #f2e8d0;
+  --parch-dark:  #e0ceab;
+  --parch-deep:  #c9b48a;
+  --ink:         #1c140a;
+  --ink-mid:     #4a3520;
+  --ink-faint:   #8a6f4a;
+  --ink-ghost:   #c4a97a;
+  --blood:       #6b1a0a;
+  --blood-light: #9b3010;
+  --gold:        #8b6914;
+  --gold-bright: #c49a1a;
+  --verdigris:   #2a5a3a;
+  --rule:        #b09060;
+  --fell:   'IM Fell English', Georgia, serif;
+  --cinzel: 'Cinzel', Georgia, serif;
+  --mono:   'Share Tech Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body { background: #1a120a; font-family: var(--fell); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+.grimoire { width: 100%; max-width: 820px; background: var(--parch); min-height: 100vh; position: relative; padding-bottom: 80px; box-shadow: 0 0 100px rgba(0,0,0,.8), inset 0 0 140px rgba(28,20,10,.07); }
+.grimoire::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 0% 0%, rgba(28,14,4,.22) 0%, transparent 32%), radial-gradient(ellipse at 100% 0%, rgba(28,14,4,.18) 0%, transparent 28%), radial-gradient(ellipse at 0% 100%, rgba(28,14,4,.18) 0%, transparent 28%), radial-gradient(ellipse at 100% 100%, rgba(28,14,4,.22) 0%, transparent 32%); pointer-events:none; z-index:0; }
+.wrap { position: relative; z-index: 1; padding: 0 52px; }
+
+/* EN-TETE */
+header { text-align: center; padding: 52px 0 36px; border-bottom: 3px double var(--rule); margin-bottom: 0; }
+.folio-label { font-family: var(--mono); font-size: 9px; letter-spacing: .32em; color: var(--ink-ghost); text-transform: uppercase; display: block; margin-bottom: 14px; }
+h1 { font-family: var(--cinzel); font-size: clamp(28px,6vw,52px); font-weight: 700; color: var(--blood); letter-spacing: .04em; line-height: 1.1; margin-bottom: 8px; text-shadow: 1px 1px 0 rgba(28,20,10,.18); }
+.h1-sub { font-family: var(--fell); font-style: italic; font-size: clamp(13px,2.2vw,17px); color: var(--ink-mid); margin-bottom: 16px; }
+.author-seal { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: var(--parch); padding: 6px 20px; font-family: var(--cinzel); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; }
+.author-seal em { color: var(--gold-bright); font-style: normal; font-weight: 600; }
+
+/* NAV SOMMAIRE */
+.sommaire { padding: 24px 0 20px; border-bottom: 1px solid var(--rule); margin-bottom: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: center; }
+.sommaire a { font-family: var(--cinzel); font-size: 9px; letter-spacing: .18em; color: var(--ink-faint); text-decoration: none; text-transform: uppercase; transition: color .15s; }
+.sommaire a:hover { color: var(--blood); }
+.sommaire a::before { content: '§ '; color: var(--rule); }
+
+/* CHAPITRES */
+.ch { display: flex; align-items: center; gap: 10px; margin: 44px 0 24px; }
+.ch::before, .ch::after { content:''; flex:1; height:1px; background:var(--rule); }
+.ch-title { font-family: var(--cinzel); font-size: 10px; letter-spacing: .22em; color: var(--blood); text-transform: uppercase; white-space: nowrap; }
+
+/* TEXTE COURANT */
+.prose { font-size: 15px; line-height: 1.95; color: var(--ink-mid); margin-bottom: 18px; }
+.prose strong { color: var(--ink); font-weight: normal; font-style: italic; }
+
+/* DROP CAP */
+.drop::first-letter { float: left; font-family: var(--cinzel); font-size: 58px; line-height: .78; margin: 4px 10px 0 0; color: var(--blood); font-weight: 700; }
+
+/* CITATION EN EXERGUE */
+.exergue { border-left: 3px solid var(--blood); padding: 14px 20px; margin: 24px 0; font-style: italic; font-size: 14px; color: var(--ink-mid); line-height: 1.85; background: rgba(107,26,10,.04); }
+.exergue cite { display: block; margin-top: 8px; font-family: var(--mono); font-size: 10px; color: var(--ink-ghost); letter-spacing: .08em; font-style: normal; }
+
+/* ENCADRE */
+.encadre { background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-top: 3px solid var(--gold); padding: 20px 22px; margin: 24px 0; }
+.encadre-title { font-family: var(--cinzel); font-size: 9px; letter-spacing: .22em; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; display: block; }
+
+/* BANDELETTES VISUELLES */
+.ban-visual { overflow-x: auto; margin: 20px 0; }
+.ban-visual table { border-collapse: collapse; font-family: var(--mono); font-size: 12px; width: 100%; }
+.ban-visual th { background: var(--ink); color: var(--parch); padding: 7px 10px; text-align: center; }
+.ban-visual th:first-child { color: var(--gold-bright); text-align: left; padding-left: 14px; }
+.ban-visual td { padding: 6px 10px; border: 1px solid var(--parch-deep); text-align: center; color: var(--ink-mid); }
+.ban-visual tr:nth-child(even) td { background: rgba(28,14,4,.04); }
+.ban-visual td:first-child { background: rgba(28,14,4,.06); color: var(--blood); font-weight: bold; text-align: left; padding-left: 14px; font-family: var(--cinzel); font-size: 10px; letter-spacing: .1em; }
+.ban-visual td.hl { background: rgba(107,26,10,.12); color: var(--blood); font-weight: bold; }
+
+/* EXEMPLE PAS A PAS */
+.steps { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 28px; height: 28px; background: var(--ink); color: var(--gold-bright); font-family: var(--cinzel); font-size: 11px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.step-body { font-size: 13px; color: var(--ink-mid); line-height: 1.8; }
+.step-body strong { font-family: var(--mono); font-size: 12px; color: var(--blood); font-style: normal; font-weight: normal; }
+
+/* FOLIO */
+.folio-block { background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); padding: 20px 22px; margin: 20px 0; }
+.folio-ref { font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: var(--ink-ghost); margin-bottom: 10px; display: block; }
+.folio-line { display: flex; align-items: baseline; gap: 14px; padding: 6px 0; border-bottom: 1px solid rgba(201,180,138,.4); flex-wrap: wrap; }
+.folio-line:last-child { border-bottom: none; }
+.folio-voy { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); min-width: 140px; }
+.folio-arrow { color: var(--rule); }
+.folio-abr { font-family: var(--cinzel); font-size: 13px; color: var(--blood); letter-spacing: .12em; min-width: 60px; }
+.folio-lat { font-family: var(--fell); font-style: italic; font-size: 13px; color: var(--ink-mid); }
+
+/* TRADITION */
+.tradition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.trad-card { background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-left: 3px solid var(--gold); padding: 14px 16px; }
+.trad-card-title { font-family: var(--cinzel); font-size: 10px; letter-spacing: .12em; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; display: block; }
+.trad-card-body { font-size: 12.5px; color: var(--ink-mid); line-height: 1.75; font-style: italic; }
+
+/* CONTACT */
+.contact-block { background: rgba(42,90,58,.06); border: 1px solid rgba(42,90,58,.25); border-left: 3px solid var(--verdigris); padding: 20px 22px; margin: 20px 0; }
+.contact-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 13px; color: var(--ink-mid); }
+.contact-row:last-child { margin-bottom: 0; }
+.contact-label { font-family: var(--cinzel); font-size: 9px; letter-spacing: .18em; color: var(--verdigris); text-transform: uppercase; min-width: 80px; }
+.contact-row a { color: var(--gold); text-decoration: none; font-family: var(--mono); font-size: 12px; }
+.contact-row a:hover { color: var(--gold-bright); text-decoration: underline; }
+
+/* DOI LIST */
+.doi-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+.doi-list a { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-decoration: none; transition: color .15s; display: block; padding: 2px 0; }
+.doi-list a:hover { color: var(--gold); }
+
+/* LIEN OUTIL */
+.tool-link { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; background: var(--ink); color: var(--parch); padding: 10px 22px; font-family: var(--cinzel); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; transition: background .15s; }
+.tool-link:hover { background: var(--blood); }
+
+/* FOOTER */
+footer { text-align: center; padding: 32px 44px; border-top: 3px double var(--rule); margin-top: 40px; position: relative; z-index: 1; }
+.footer-brand { font-family: var(--cinzel); font-size: 14px; color: var(--blood); font-weight: 700; margin-bottom: 4px; }
+.footer-copy { font-family: var(--mono); font-size: 9px; color: var(--ink-ghost); letter-spacing: .12em; }
+
+@media (max-width: 600px) {
+  .wrap { padding: 0 18px; }
+  h1 { font-size: 26px; }
+  .tradition-grid { grid-template-columns: 1fr; }
+  footer { padding: 24px 18px; }
+  .folio-line { flex-direction: column; gap: 2px; }
+}
+</style>
+</head>
+<body>
+<div class="grimoire">
+<div class="wrap">
+
+  <!-- EN-TETE -->
+  <header>
+    <span class="folio-label">Kortexneo · Note explicative · MS 408</span>
+    <h1>La Methode</h1>
+    <p class="h1-sub">Du chiffre aux simples — une hypothese de dechiffrement du manuscrit de Voynich</p>
+    <div class="author-seal">Par <em>Machkour Mohamed</em></div>
+  </header>
+
+  <!-- SOMMAIRE -->
+  <nav class="sommaire">
+    <a href="#hypothese">L'hypothese</a>
+    <a href="#tradition">La tradition</a>
+    <a href="#methode">La methode</a>
+    <a href="#contribuer">Contribuer</a>
+  </nav>
+
+  <!-- I HYPOTHESE -->
+  <div class="ch" id="hypothese"><span class="ch-title">I · L'hypothese Voynich</span></div>
+
+  <p class="prose drop">
+    Le manuscrit MS 408, dit manuscrit de Voynich, conserve a la bibliotheque Beinecke de l'universite Yale, demeure l'un des textes les plus enigmatiques de l'histoire de l'ecriture. Redige dans une ecriture inconnue, illustre de plantes non identifiees, de figures astronomiques et de scenes de bain enigmatiques, il a resiste a toutes les tentatives de dechiffrement depuis sa redecouverte par le libraire Wilfrid Voynich en 1912.
+  </p>
+
+  <p class="prose">
+    L'hypothese ici developpee propose que le Voynichese — l'ecriture du manuscrit — encode des <strong>abreviations latines de la pharmacopee medievale</strong>, transcrites selon un systeme cryptographique a grilles rotatives : la methode Kortexneo. Le manuscrit ne serait pas un texte en langue inconnue, mais un recueil chiffre de prescriptions et de preparations d'apothicaire, deliberement rendu illisible pour en preserver les secrets.
+  </p>
+
+  <div class="exergue">
+    Les apothicaires medievaux annotaient leurs documents personnels en abreviations latines codees, accessibles aux seuls inities. Un tel document, chiffre par surcroit, n'aurait rien d'exceptionnel dans le contexte intellectuel du XVe siecle italien.
+    <cite>— Contexte codicologique, tradition Salernitaine</cite>
+  </div>
+
+  <p class="prose">
+    Le manuscrit est positionne, par son contenu botanique et ses convergences textuelles, dans la tradition du <em>Tractatus de herbis</em> et du <em>Circa instans</em>, corpus pharmacologique salernitain du XIIe siecle, diffuse dans le nord de l'Italie au XIVe et XVe siecle. Un manuscrit padouan, possiblement lie aux milieux universitaires de medecine, constitue l'hypothese de provenance la plus coherente.
+  </p>
+
+  <!-- II TRADITION -->
+  <div class="ch" id="tradition"><span class="ch-title">II · La tradition du Circa instans</span></div>
+
+  <p class="prose drop">
+    Pour comprendre l'hypothese, il faut connaitre le contexte dans lequel elle s'inscrit. Deux corpus constituent le socle de la pharmacopee medievale latine dont le Voynich serait issu.
+  </p>
+
+  <div class="tradition-grid">
+    <div class="trad-card">
+      <span class="trad-card-title">Circa instans</span>
+      <p class="trad-card-body">Traite de matiere medicale compose vers 1150 a Salerne par Matthaeus Platearius. Repertorie et decrit les simples — plantes, mineraux, substances animales — utilises en medecine. Devient le manuel de reference de tout apothicaire medieval forme dans la tradition latine.</p>
+    </div>
+    <div class="trad-card">
+      <span class="trad-card-title">Tractatus de herbis</span>
+      <p class="trad-card-body">Herbier illustre derive de la tradition du Dioscoride latin. Les manuscrits du groupe nord-italien, datant du XIVe siecle, sont particulierement remarquables par la qualite de leurs illustrations botaniques — comparables en style a certains folios du Voynich.</p>
+    </div>
+    <div class="trad-card">
+      <span class="trad-card-title">Tradition Padouane</span>
+      <p class="trad-card-body">L'universite de Padoue, fondee en 1222, devient au XIVe siecle le centre europeen de la medecine empirique. Ses gradues produisent des compilations medico-botaniques alliant rigueur academique et pratique apothicaire, souvent annotees en abreviations latines.</p>
+    </div>
+    <div class="trad-card">
+      <span class="trad-card-title">La methode des abreviations</span>
+      <p class="trad-card-body">Les apothicaires medievaux developpent un systeme dense d'abreviations latines — <em>aa</em> pour <em>ana</em>, <em>pulv.</em> pour <em>pulvis</em>, <em>prn</em> pour <em>pro re nata</em> — qui leur permet d'annoter rapidement prescriptions et preparations. Ce systeme est atteste des le debut du XVe siecle.</p>
+    </div>
+  </div>
+
+  <p class="prose">
+    C'est dans ce milieu — nord-italien, universitaire, pharmacologique, XIVe-XVe siecle — que le manuscrit de Voynich trouve sa place la plus coherente. Les plantes representees, bien qu'stylisees au point d'etre difficiles a identifier, correspondent pour plusieurs d'entre elles a des especes du <em>Circa instans</em>. L'analyse paleobotanique croisee avec les abreviations decodees a permis de retrouver, folio apres folio, des preparations reconnaissables.
+  </p>
+
+  <!-- III METHODE -->
+  <div class="ch" id="methode"><span class="ch-title">III · La methode Kortexneo</span></div>
+
+  <p class="prose drop">
+    La methode Kortexneo est un systeme de chiffrement a six grilles rotatives, chacune composee de quinze positions correspondant aux quinze lettres de l'alphabet latin apothicaire — A, B, C, D, E, F, G, H, I, L, M, N, O, P, S. Chaque grille est un decalage circulaire de la precedente.
+  </p>
+
+  <div class="encadre">
+    <span class="encadre-title">Les six bandelettes — table de reference</span>
+    <div class="ban-visual">
+      <table>
+        <thead>
+          <tr>
+            <th>Grille</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+            <th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Grille 0</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td><td>M</td><td>N</td><td>O</td><td>P</td><td>S</td></tr>
+          <tr><td>Grille 1</td><td>S</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td><td>M</td><td>N</td><td>O</td><td>P</td></tr>
+          <tr><td>Grille 2</td><td>P</td><td>S</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td><td>M</td><td>N</td><td>O</td></tr>
+          <tr><td>Grille 3</td><td>O</td><td>P</td><td>S</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td><td>M</td><td>N</td></tr>
+          <tr><td>Grille 4</td><td>N</td><td>O</td><td>P</td><td>S</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td><td>M</td></tr>
+          <tr><td>Grille 5</td><td>M</td><td>N</td><td>O</td><td>P</td><td>S</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>H</td><td>I</td><td>L</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="prose">
+    Le principe de dechiffrement est le suivant : chaque element numerique du texte chiffre designe une <strong>position</strong> dans la grille active. La grille avance automatiquement apres chaque element — chiffre ou lettre — de G0 a G5, puis repart a G0. La formule de conversion est :
+  </p>
+
+  <div class="encadre" style="font-family: var(--mono); font-size: 13px; color: var(--blood); letter-spacing: .06em;">
+    indice = (position - 1 - decalage) mod 15<br>
+    <span style="color: var(--ink-faint); font-size: 11px;">avec decalage = numero de grille + 1</span>
+  </div>
+
+  <p class="prose">
+    Les elements alphabetiques du texte chiffre sont transmis tels quels — ils constituent la charpente de l'abreviation, les chiffres en remplissant les lettres variables. Un mot chiffre produit ainsi une abreviation latine complete, que l'on recherche ensuite dans le repertoire de la pharmacopee.
+  </p>
+
+  <!-- IV CONTRIBUER -->
+  <div class="ch" id="contribuer"><span class="ch-title">IV · Contribuer & Contact</span></div>
+
+  <p class="prose drop">
+    Cette recherche est celle d'un chercheur independant. Elle n'appartient a aucune institution et n'a pas de budget. Sa force est d'etre ouverte : la methode est entierement documentee, le code de dechiffrement est public, les publications sont en acces libre. Toute personne curieuse peut verifier, tester, critiquer ou prolonger le travail.
+  </p>
+
+  <p class="prose">
+    Si vous etes paleographe, latiniste, botaniste medieval, historien de la medecine, cryptographe ou simplement passionne — votre regard est le bienvenu. Les contributions au repertoire des abreviations, les signalements d'erreurs, les hypotheses alternatives sont toutes les bienvenues.
+  </p>
+
+  <div class="contact-block">
+    <div class="contact-row">
+      <span class="contact-label">Contact</span>
+      <a href="/cdn-cgi/l/email-protection#4e25213c3a2b36202b210e26213a232f2722602d2123"><span class="__cf_email__" data-cfemail="03686c7177667b6d666c436b6c776e626a6f2d606c6e">[email&#160;protected]</span></a>
+    </div>
+    <div class="contact-row">
+      <span class="contact-label">Outil</span>
+      <a href="/">Decodeur & Pharmacopee →</a>
+    </div>
+    <div class="contact-row" style="align-items: flex-start;">
+      <span class="contact-label" style="padding-top:2px;">Publications</span>
+      <div class="doi-list">
+        <a href="https://doi.org/10.5281/zenodo.19119705" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19119705</a>
+        <a href="https://doi.org/10.5281/zenodo.19133776" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19133776</a>
+        <a href="https://doi.org/10.5281/zenodo.19145210" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19145210</a>
+        <a href="https://doi.org/10.5281/zenodo.19148930" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19148930</a>
+        <a href="https://doi.org/10.5281/zenodo.19160799" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19160799</a>
+        <a href="https://doi.org/10.5281/zenodo.19208522" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19208522</a>
+      </div>
+    </div>
+  </div>
+
+  <a class="tool-link" href="/">Acceder au decodeur Kortexneo →</a>
+
+</div>
+
+<footer>
+  <div class="footer-brand">Kortexneo · Pour le Voynich</div>
+  <div class="footer-copy">© 2026 Machkour Mohamed — Tous droits reserves · Methode protegee</div>
+  <div class="footer-copy" style="margin-top:6px; opacity:.6;">Recherche & contenu — Machkour Mohamed (Kortexneo) · Conception & developpement — Claude AI (Anthropic)</div>
+</footer>
+</div>
+</body>
+</html>
