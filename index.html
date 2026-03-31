@@ -1,0 +1,341 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kortexneo — Pour le Voynich</title>
+<meta name="description" content="Decodeur Kortexneo et Pharmacopee latine — Pour le Voynich. Par Machkour Mohamed.">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --parch: #f2e8d0; --parch-dark: #e0ceab; --parch-deep: #c9b48a;
+  --ink: #1c140a; --ink-mid: #4a3520; --ink-faint: #8a6f4a; --ink-ghost: #c4a97a;
+  --blood: #6b1a0a; --blood-light: #9b3010;
+  --gold: #6b1a0a; --gold-bright: #9b3010;
+  --verdigris: #2a5a3a; --rule: #b09060;
+  --fell: 'IM Fell English', Georgia, serif;
+  --cinzel: 'Cinzel', Georgia, serif;
+  --mono: 'Share Tech Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body { background: #1a120a; font-family: var(--fell); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.grimoire { width: 100%; max-width: 820px; background: var(--parch); min-height: 100vh; position: relative; padding-bottom: 80px; box-shadow: 0 0 100px rgba(0,0,0,.8); }
+.grimoire::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 0% 0%, rgba(28,14,4,.22) 0%, transparent 32%), radial-gradient(ellipse at 100% 100%, rgba(28,14,4,.22) 0%, transparent 32%); pointer-events:none; z-index:0; }
+.wrap { position: relative; z-index: 1; padding: 0 44px; }
+header { text-align: center; padding: 52px 0 32px; border-bottom: 3px double var(--rule); margin-bottom: 36px; }
+.folio-label { font-family: var(--mono); font-size: 9px; letter-spacing: .32em; color: var(--ink-ghost); text-transform: uppercase; display: block; margin-bottom: 14px; }
+h1 { font-family: var(--cinzel); font-size: clamp(30px,6.5vw,56px); font-weight: 700; color: var(--blood); letter-spacing: .04em; line-height: 1.1; margin-bottom: 8px; }
+.h1-sub { font-family: var(--fell); font-style: italic; font-size: clamp(13px,2.2vw,17px); color: var(--ink-mid); margin-bottom: 16px; }
+.author-seal { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: var(--parch); padding: 6px 20px; font-family: var(--cinzel); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; }
+.author-seal em { color: #c49a1a; font-style: normal; font-weight: 600; }
+.ch { display: flex; align-items: center; gap: 10px; margin: 30px 0 20px; }
+.ch::before, .ch::after { content:''; flex:1; height:1px; background:var(--rule); }
+.ch-title { font-family: var(--cinzel); font-size: 10px; letter-spacing: .22em; color: var(--blood); text-transform: uppercase; white-space: nowrap; }
+.field-label { font-family: var(--cinzel); font-size: 9px; letter-spacing: .22em; color: var(--blood); text-transform: uppercase; display: block; margin-bottom: 8px; }
+textarea { width: 100%; min-height: 110px; background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-left: 3px solid var(--blood); padding: 14px 16px; font-family: var(--mono); font-size: 13px; line-height: 1.9; color: var(--ink); resize: vertical; outline: none; }
+textarea::placeholder { color: var(--ink-ghost); font-style: italic; font-family: var(--fell); font-size: 13px; }
+.btn-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+button { font-family: var(--cinzel); font-size: 10px; letter-spacing: .15em; cursor: pointer; transition: all .15s; text-transform: uppercase; border: none; }
+.btn-ink { background: var(--ink); color: var(--parch); padding: 8px 20px; border: 1px solid var(--ink); }
+.btn-ink:hover { background: var(--blood); border-color: var(--blood); }
+.btn-ghost { background: transparent; border: 1px solid var(--parch-deep); color: var(--ink-faint); padding: 8px 14px; }
+.btn-ghost:hover { border-color: var(--ink-faint); color: var(--ink-mid); }
+.hint { font-size: 11px; font-style: italic; color: var(--ink-ghost); margin-top: 8px; }
+.result-box { background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-top: 3px solid var(--blood); padding: 18px 20px 14px; min-height: 58px; position: relative; }
+.result-text { font-family: var(--cinzel); font-size: clamp(16px,3.5vw,22px); letter-spacing: .16em; color: var(--ink); line-height: 1.8; word-break: break-word; }
+.result-placeholder { font-style: italic; color: var(--ink-ghost); font-size: 14px; font-family: var(--fell); }
+.copy-btn { position: absolute !important; top: 8px; right: 8px; background: transparent !important; border: 1px solid var(--parch-deep) !important; color: var(--ink-ghost) !important; padding: 3px 10px !important; font-size: 9px !important; }
+.copy-btn:hover { border-color: var(--blood) !important; color: var(--blood) !important; }
+.table-toggle { background: transparent; border: 1px solid var(--parch-deep); color: var(--ink-faint); padding: 7px 14px; font-family: var(--cinzel); font-size: 9px; letter-spacing: .15em; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+.table-toggle:hover { border-color: var(--ink-mid); color: var(--ink-mid); }
+.collapsible { display: none; overflow-x: auto; margin-bottom: 4px; }
+.collapsible.open { display: block; }
+table.ban { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 11px; }
+table.ban th { background: var(--ink); color: var(--parch); padding: 6px 8px; text-align: center; }
+table.ban td { padding: 4px 8px; border: 1px solid var(--parch-deep); text-align: center; color: var(--ink-mid); }
+table.ban tr:nth-child(even) td { background: rgba(28,14,4,.04); }
+table.ban td:first-child { background: var(--ink); color: #c49a1a; font-weight: bold; }
+.sym-block { background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-top: 3px solid var(--blood); padding: 16px 18px; margin-bottom: 16px; }
+.sym-label { font-family: var(--cinzel); font-size: 9px; letter-spacing: .2em; color: var(--blood); text-transform: uppercase; display: block; margin-bottom: 10px; }
+.sym-block img { width: 100%; display: block; }
+.sym-note { font-family: var(--cinzel); font-size: 9px; letter-spacing: .1em; color: var(--blood); text-transform: uppercase; margin-top: 8px; text-align: center; display: block; }
+.search-row { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 180px; background: rgba(28,14,4,.04); border: 1px solid var(--parch-deep); border-left: 3px solid var(--blood); padding: 9px 12px; font-family: var(--mono); font-size: 12px; color: var(--ink); outline: none; }
+.res-count { font-family: var(--mono); font-size: 10px; color: var(--ink-ghost); letter-spacing: .08em; white-space: nowrap; }
+.abbrev-wrap { overflow-x: auto; }
+.abbrev-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.abbrev-table thead tr { background: var(--ink); }
+.abbrev-table thead th { font-family: var(--cinzel); font-size: 9px; letter-spacing: .2em; color: var(--parch); padding: 9px 14px; text-align: left; text-transform: uppercase; font-weight: 600; }
+.abbrev-table thead th:first-child { color: #c49a1a; }
+.abbrev-table tbody tr { border-bottom: 1px solid var(--parch-dark); transition: background .12s; }
+.abbrev-table tbody tr:hover { background: rgba(107,26,10,.08); }
+.abbrev-table tbody tr.contrib-row { background: rgba(42,90,58,.05); }
+.abbrev-table td { padding: 8px 14px; vertical-align: middle; }
+.abbrev-table td:nth-child(1) { font-family: var(--mono); font-size: 12px; color: var(--blood); font-weight: bold; white-space: nowrap; width: 160px; }
+.abbrev-table td:nth-child(2) { font-family: var(--fell); font-style: italic; color: var(--ink-mid); }
+.abbrev-table td:nth-child(3) { text-align: center; width: 46px; }
+.del-btn { background: transparent; border: none; color: var(--parch-deep); font-size: 15px; cursor: pointer; padding: 2px 6px; font-family: serif; }
+.del-btn:hover { color: var(--blood); }
+.contrib-badge { display: inline-block; font-family: var(--mono); font-size: 8px; color: var(--verdigris); border: 1px solid var(--verdigris); padding: 1px 5px; margin-left: 6px; vertical-align: middle; }
+.no-results { text-align: center; padding: 28px; font-style: italic; color: var(--ink-ghost); font-size: 13px; }
+.contrib-form { background: rgba(42,90,58,.06); border: 1px solid rgba(42,90,58,.25); border-left: 3px solid var(--verdigris); padding: 18px 20px; margin-top: 16px; }
+.contrib-title { font-family: var(--cinzel); font-size: 10px; letter-spacing: .2em; color: var(--verdigris); text-transform: uppercase; margin-bottom: 14px; }
+.contrib-fields { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-bottom: 12px; }
+.contrib-field { display: flex; flex-direction: column; gap: 4px; }
+.contrib-field label { font-family: var(--cinzel); font-size: 8px; letter-spacing: .18em; color: var(--blood); text-transform: uppercase; }
+.contrib-field input { background: var(--parch); border: 1px solid var(--parch-deep); padding: 8px 10px; font-family: var(--mono); font-size: 12px; color: var(--ink); outline: none; width: 100%; }
+.contrib-field input:focus { border-color: var(--verdigris); }
+.contrib-field input::placeholder { color: var(--ink-ghost); font-style: italic; font-family: var(--fell); font-size: 11px; }
+.contrib-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn-green { background: var(--verdigris); color: var(--parch); padding: 8px 20px; border: 1px solid var(--verdigris); }
+.btn-green:hover { background: #3d8055; border-color: #3d8055; }
+.contrib-note { font-size: 11px; font-style: italic; color: var(--ink-ghost); }
+.contrib-msg { font-family: var(--mono); font-size: 10px; padding: 4px 10px; display: none; }
+.contrib-msg.ok { color: var(--verdigris); border: 1px solid var(--verdigris); display: inline-block; }
+.contrib-msg.err { color: var(--blood); border: 1px solid var(--blood); display: inline-block; }
+footer { text-align: center; padding: 36px 44px; border-top: 3px double var(--rule); margin-top: 40px; position: relative; z-index: 1; }
+.footer-brand { font-family: var(--cinzel); font-size: 15px; color: var(--blood); font-weight: 700; margin-bottom: 6px; }
+.footer-copy { font-family: var(--mono); font-size: 9px; color: var(--ink-ghost); letter-spacing: .12em; margin-bottom: 6px; }
+.footer-contact { margin-bottom: 20px; font-family: var(--mono); font-size: 11px; color: var(--ink-mid); }
+.doi-section { text-align: left; }
+.doi-title { font-family: var(--cinzel); font-size: 9px; letter-spacing: .22em; color: var(--blood); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.doi-title::after { content:''; flex:1; height:1px; background: var(--rule); }
+.doi-list { display: flex; flex-direction: column; gap: 6px; }
+.doi-list a { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-decoration: none; transition: color .15s; display: block; padding: 2px 0; }
+.doi-list a:hover { color: var(--blood); }
+.footer-rights { font-family: var(--mono); font-size: 9px; color: var(--ink-ghost); opacity: .5; margin-top: 20px; }
+@media (max-width: 560px) { .wrap { padding: 0 16px; } h1 { font-size: 26px; } footer { padding: 24px 16px; } .contrib-fields { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="grimoire">
+<div class="wrap">
+
+<header>
+  <span class="folio-label">Methode de decodage officielle · Kortexneo</span>
+  <h1>Pour le Voynich</h1>
+  <p class="h1-sub">Alchimie botanique &amp; Art du dechiffrement</p>
+  <div class="author-seal">Compose par <em>Machkour Mohamed</em></div>
+  <div style="margin-top:18px;">
+    <a href="kortexneo-methode" style="font-family:var(--cinzel);font-size:10px;letter-spacing:.18em;color:var(--blood);text-decoration:none;border:1px solid var(--blood);padding:6px 16px;text-transform:uppercase;">Lire la methode</a>
+  </div>
+</header>
+
+<div class="ch"><span class="ch-title">I · Inscription chiffree</span></div>
+<span class="field-label">Texte a dechiffrer</span>
+<textarea id="input" placeholder="Inscrire ici le message chiffre...&#10;&#10;Chaque mot est decode par les six bandelettes rotatives.&#10;Exemple : 1,2,3 4,5,6"></textarea>
+<div class="btn-row">
+  <button class="btn-ghost" onclick="loadEx()">Exemple</button>
+  <button class="btn-ghost" onclick="clearInput()">Effacer</button>
+  <button class="btn-ink" onclick="decode()">Dechiffrer</button>
+</div>
+<p class="hint">Chiffres 1-15 decodes par bandelette · Lettres transmises telles quelles</p>
+
+<div class="ch" style="margin-top:28px;"><span class="ch-title">II · Message revele</span></div>
+<div class="result-box">
+  <button class="copy-btn btn-ghost" id="copyBtn" onclick="copyRes()">copier</button>
+  <div id="result" class="result-placeholder">En attente du message...</div>
+</div>
+
+<div class="ch" style="margin-top:32px;"><span class="ch-title">III · Les six bandelettes</span></div>
+<button class="table-toggle" onclick="document.getElementById('bWrap').classList.toggle('open')">Afficher la table de reference</button>
+<div class="collapsible" id="bWrap"><table class="ban" id="banT"></table></div>
+
+<div class="ch" style="margin-top:32px;"><span class="ch-title">IV · Les 15 symboles</span></div>
+<div class="sym-block">
+  <span class="sym-label">Symboles dans leur ordre d'apparition de 1 a 15</span>
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADhA4QDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6A1O7uXu00uwZVuZE8x5WGREmcZx3J6AUh8PadM5luhPdSnq0k7fyBAFM0z5/E165nOSqsQfVdp/mprZxwDnPPSvFPQ2MoeHdHB/49WI/67yf/FVyXxk+IHh7wB4N1LxJ4qulS3tVGyBfnuJm+6kcY/icjA9Bk8AVxX7U37Q+m/DHSn8J+EVa88U6sP3aA5fT4m/jYf8APVx/CvoM8Z618qfs7fC/Wvjd8R5fHnxVv7+W508vJp9jK4a3tQeiMQf3hH3mI5P3eBQ1GEU273Q+Z3Vz074M/DvxR8YL26+IXxrv7+W4s5fK0jSo3KWFkP+W8gP32H8LdEHG7k4r6q0XT7fSdKtNPsoz5FpAkEeQSFVFCgZ78Co/D+jWfhzw/p+i6XG0VnptpHbQ723FlRABk+uK0yO3I9K551JvVmtQWhtPjp9aOaQ9aP/r1iaFpOO9J/hTT1zQA3p60v0pD9aT+mKABelKKKQEf8A0ooopgI3U0UUUAhP8KPpRRQBB1ooopgH/1qXpRRSAQ/rRRRQB//9k=" alt="Les 15 symboles Kortexneo">
+  <span class="sym-note">Le symbole numero 10 identifie dans le manuscrit MS 408</span>
+</div>
+
+<div class="ch" style="margin-top:32px;"><span class="ch-title">V · Abreviations</span></div>
+<div class="search-row">
+  <input class="search-input" id="sq" type="text" placeholder="Rechercher une abreviation ou un terme latin..." oninput="filterAbbrev()">
+  <span class="res-count" id="rc"></span>
+</div>
+<div class="abbrev-wrap">
+  <table class="abbrev-table">
+    <thead><tr><th>Abreviation</th><th>Latin</th><th></th></tr></thead>
+    <tbody id="ab"></tbody>
+  </table>
+  <div class="no-results" id="nr" style="display:none">Aucune abreviation trouvee.</div>
+</div>
+
+<div class="contrib-form">
+  <div class="contrib-title">Contribuer au repertoire</div>
+  <div class="contrib-fields">
+    <div class="contrib-field">
+      <label>Abreviation *</label>
+      <input id="cAbr" type="text" placeholder="ex: q.i.d.">
+    </div>
+    <div class="contrib-field">
+      <label>Latin (optionnel)</label>
+      <input id="cLat" type="text" placeholder="ex: quater in die">
+    </div>
+    <div class="contrib-field">
+      <label>Signification *</label>
+      <input id="cSig" type="text" placeholder="ex: Quatre fois par jour">
+    </div>
+  </div>
+  <div class="contrib-actions">
+    <button class="btn-green" onclick="addContrib()">Ajouter</button>
+    <span class="contrib-note">Sauvegarde dans votre navigateur.</span>
+    <span class="contrib-msg" id="cMsg"></span>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">Kortexneo · Pour le Voynich</div>
+  <div class="footer-copy">2026 Machkour Mohamed — Tous droits reserves</div>
+  <div class="footer-contact">Contact : kortexneo@hotmail.com</div>
+  <div class="doi-section">
+    <div class="doi-title">Publications · DOI Zenodo</div>
+    <div class="doi-list">
+      <a href="https://doi.org/10.5281/zenodo.19337911" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19337911</a>
+      <a href="https://doi.org/10.5281/zenodo.19119705" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19119705</a>
+      <a href="https://doi.org/10.5281/zenodo.19133776" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19133776</a>
+      <a href="https://doi.org/10.5281/zenodo.19145210" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19145210</a>
+      <a href="https://doi.org/10.5281/zenodo.19148930" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19148930</a>
+      <a href="https://doi.org/10.5281/zenodo.19160799" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19160799</a>
+      <a href="https://doi.org/10.5281/zenodo.19208522" target="_blank" rel="noopener">doi.org/10.5281/zenodo.19208522</a>
+    </div>
+  </div>
+  <div class="footer-rights">Methode protegee · Reproduction interdite · Conception : Claude AI (Anthropic)</div>
+</footer>
+</div>
+
+<script>
+var BAN = [
+  ["A","B","C","D","E","F","G","H","I","L","M","N","O","P","S"],
+  ["S","A","B","C","D","E","F","G","H","I","L","M","N","O","P"],
+  ["P","S","A","B","C","D","E","F","G","H","I","L","M","N","O"],
+  ["O","P","S","A","B","C","D","E","F","G","H","I","L","M","N"],
+  ["N","O","P","S","A","B","C","D","E","F","G","H","I","L","M"],
+  ["M","N","O","P","S","A","B","C","D","E","F","G","H","I","L"]
+];
+function xl(n,g,d){ return BAN[g][((n-1-d)%15+15)%15]; }
+function decoder(t){
+  var mots=t.trim().split(/\s+/).filter(function(x){return x.length>0;});
+  if(!mots.length) return [];
+  var g=0;
+  return mots.map(function(m){
+    var s=""; var parts=m.split(",");
+    for(var i=0;i<parts.length;i++){
+      var e=parts[i];
+      if(/^\\d+$/.test(e)) s+=xl(parseInt(e,10),g,g+1); else s+=e;
+      g=(g+1)%6;
+    }
+    return s;
+  });
+}
+var lastResult="";
+function decode(){
+  var mots=decoder(document.getElementById("input").value);
+  var el=document.getElementById("result");
+  if(!mots.length){el.className="result-placeholder";el.textContent="En attente du message...";lastResult="";return;}
+  lastResult=mots.join(" ");el.className="result-text";el.textContent=lastResult;
+}
+function clearInput(){document.getElementById("input").value="";decode();}
+function copyRes(){
+  if(!lastResult) return;
+  navigator.clipboard.writeText(lastResult).then(function(){
+    var b=document.getElementById("copyBtn");
+    b.textContent="copie!";b.classList.add("copied");
+    setTimeout(function(){b.textContent="copier";b.classList.remove("copied");},2000);
+  });
+}
+function loadEx(){document.getElementById("input").value="1,2,3 4,5,6";decode();}
+document.getElementById("input").addEventListener("input",decode);
+
+(function(){
+  var t=document.getElementById("banT");
+  var p=[]; for(var i=1;i<=15;i++) p.push(i);
+  var h="<thead><tr><th>G\\P</th>";
+  for(var i=0;i<p.length;i++) h+="<th>"+p[i]+"</th>";
+  h+="</thead><tbody>";
+  for(var gi=0;gi<BAN.length;gi++){
+    h+="<tr><td>"+gi+"</td>";
+    for(var li=0;li<BAN[gi].length;li++) h+="<td>"+BAN[gi][li]+"</td>";
+    h+="</tr>";
+  }
+  t.innerHTML=h+"</tbody>";
+})();
+
+var BASE=[
+  ["a.c.","ante cibum"],["a.d.","auris dextra"],["a.l., a.s.","auris laeva, auris sinistra"],
+  ["a.m.","ante meridiem"],["a.u.","auris utraque"],["aa","ana"],["ad","ad"],
+  ["ad lib.","ad libitum"],["admov.","admove"],["agit","agita"],["alt. h.","alternis horis"],
+  ["amp","—"],["amt","—"],["aq","aqua"],["B.M.","—"],["b.d., b.i.d.","bis in die"],
+  ["bis","bis"],["bol.","bolus"],["B.S.","—"],["B.S.A","—"],["BUCC","—"],
+  ["c","cum"],["c","cibos"],["cap., caps.","capsula"],["cc","cum cibos"],["cf","—"],
+  ["comp.","—"],["m, min","minimum"],["M.","misce"],["mcg","—"],
+  ["m.d.u.","more dicto utendus"],["mEq","—"],["mg","—"],["mist.","mistura"],
+  ["mitte","mitte"],["mL","—"],["nebul","nebula"],["N.M.T.","—"],["noct.","nocte"],
+  ["non rep.","non repetatur"],["NS","—"],["1/2NS","—"],["N.T.E.","—"],
+  ["o.d.","oculus dexter"],["o.s.","oculus sinister"],["o.u.","oculus uterque"],
+  ["o2","—"],["oz","—"],["p.c.","post cibum"],["p.m.","post meridiem"],
+  ["p.o.","per os"],["p.r.","—"],["per","per"],["prn","pro re nata"],["pulv.","pulvis"],
+  ["q","quaque"],["q.a.d.","quoque alternis die"],["q.a.m.","quaque die ante meridiem"],
+  ["q.d.","quaque die"],["q.d.s.","quater die sumendus"],["q.h.","quaque hora"],
+  ["q.h.s.","quaque hora somni"],["q.i.d.","quater in die"],["q.o.d.","—"],
+  ["qqh","quater quaque hora"],["q.s.","quantum sufficiat"],["QWK","—"],["R","—"],
+  ["rep., rept.","repetatur"],["RL, R/L","—"],["s","sine"],["s.a.","secundum artem"],
+  ["SC, subc, subcut, subq, SQ","—"],["sig","—"],["SL","—"],["sol","solutio"],
+  ["s.o.s., si op. sit","si opus sit"],["ss","semis"],["stat","statim"],
+  ["supp","suppositorium"],["susp","—"],["syr","syrupus"],["t.i.d.","ter in die"],
+  ["t.d.s.","ter die sumendum"],["t.i.w.","—"],["tab","tabella"],["tal., t","talus"],
+  ["tbsp","—"],["top.","—"],["T.P.N.","—"],["tr, tinc., tinct.","—"],
+  ["troche","trochiscus"],["tsp","—"],["u.d., ut. dict.","ut dictum"],["ung.","unguentum"]
+];
+
+var STORE_KEY="kortexneo_contributions";
+function loadContribs(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch(e){return[];}}
+function saveContribs(data){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}}
+function deleteContrib(id){var data=loadContribs().filter(function(c){return c.id!==id;});saveContribs(data);renderAll();}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function renderAll(){
+  var q=(document.getElementById("sq").value||"").trim().toLowerCase();
+  var contribs=loadContribs();
+  var rows=[];
+  for(var i=0;i<BASE.length;i++) rows.push({abbr:BASE[i][0],latin:BASE[i][1],contrib:false,id:null});
+  for(var i=0;i<contribs.length;i++) rows.push({abbr:contribs[i].abbr,latin:contribs[i].latin,contrib:true,id:contribs[i].id});
+  var total=rows.length;
+  if(q) rows=rows.filter(function(r){return r.abbr.toLowerCase().indexOf(q)!==-1||r.latin.toLowerCase().indexOf(q)!==-1;});
+  var tb=document.getElementById("ab");
+  var nr=document.getElementById("nr");
+  var rc=document.getElementById("rc");
+  if(!rows.length){tb.innerHTML="";nr.style.display="block";rc.textContent="0 resultat";return;}
+  nr.style.display="none";
+  rc.textContent=(q?rows.length+" / "+total:total)+" abreviation"+(total>1?"s":"");
+  var html="";
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    html+='<tr class="'+(r.contrib?"contrib-row":"")+'"><td>'+esc(r.abbr)+(r.contrib?'<span class="contrib-badge">contrib.</span>':'')+'</td><td>'+esc(r.latin)+'</td><td>'+(r.contrib?'<button class="del-btn" onclick="deleteContrib(\''+r.id+'\')" title="Supprimer">&#x2715;</button>':'')+'</td></tr>';
+  }
+  tb.innerHTML=html;
+}
+function filterAbbrev(){renderAll();}
+
+function addContrib(){
+  var abr=document.getElementById("cAbr").value.trim();
+  var lat=document.getElementById("cLat").value.trim();
+  var sig=document.getElementById("cSig").value.trim();
+  var msg=document.getElementById("cMsg");
+  if(!abr||!sig){msg.className="contrib-msg err";msg.textContent="Abreviation et signification requises.";setTimeout(function(){msg.className="contrib-msg";},3000);return;}
+  var entry={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),abbr:abr,latin:lat||"—",sig:sig};
+  var data=loadContribs();data.push(entry);saveContribs(data);renderAll();
+  document.getElementById("cAbr").value="";document.getElementById("cLat").value="";document.getElementById("cSig").value="";
+  msg.className="contrib-msg ok";msg.textContent="Ajoutee avec succes !";
+  setTimeout(function(){msg.className="contrib-msg";},3000);
+}
+document.getElementById("cSig").addEventListener("keydown",function(e){if(e.key==="Enter") addContrib();});
+renderAll();
+</script>
+</body>
+</html>
+```
